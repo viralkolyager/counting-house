@@ -17,6 +17,7 @@
          python ex3_mortgage.py --no-show --out-dir plots
 """
 import argparse
+import math
 from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, ROUND_UP, Decimal, InvalidOperation, localcontext
 from pathlib import Path
@@ -24,7 +25,7 @@ from pathlib import Path
 KOP = Decimal("0.01")          # шаг округления — одна копейка
 MONTHS_PER_YEAR = 12
 PERCENT = 100
-CALC_PREC = 50                 # знаков в промежуточных вычислениях (больше, чем 28 по умолчанию)
+CALC_PREC = 50                 # запас знаков в промежуточных вычислениях (по умолчанию в Decimal 28)
 
 DEFAULT_S, DEFAULT_X, DEFAULT_Y = "3000000", "12", 15
 
@@ -65,14 +66,23 @@ def monthly_rate(annual_percent: Decimal) -> Decimal:
     return annual_percent / MONTHS_PER_YEAR / PERCENT
 
 
+def precision_for(r: Decimal, n: int) -> int:
+    """Сколько значащих цифр нужно, чтобы (1 + r)^-n не потерялось в 1 - (1 + r)^-n.
+
+    (1 + r)^n имеет около n·log10(1 + r) цифр — их добавляем к запасу CALC_PREC.
+    float здесь только для оценки числа цифр, сами деньги считаются в Decimal.
+    """
+    return CALC_PREC + math.ceil(n * math.log10(1 + float(r)))
+
+
 def annuity_payment(s: Decimal, annual_percent: Decimal, years: int) -> Decimal:
     """а) Размер аннуитетного платежа, округлённый вверх до копейки,
     чтобы кредит гарантированно гасился не позже срока."""
     check_args(s, annual_percent, years)
     n = years * MONTHS_PER_YEAR
+    r = monthly_rate(annual_percent)
     with localcontext() as ctx:
-        ctx.prec = CALC_PREC
-        r = monthly_rate(annual_percent)
+        ctx.prec = precision_for(r, n)
         if r == 0:
             return money(s / n, ROUND_UP)
         p = s * r / (1 - (1 + r) ** -n)

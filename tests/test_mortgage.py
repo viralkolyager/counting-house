@@ -91,6 +91,16 @@ class TestEdgeCases(unittest.TestCase):
         self.assertEqual(rows[-1].balance_after, 0)
         self.assertEqual(sum(r.principal for r in rows), D("0.01"))
 
+    def test_very_long_loan(self):
+        # 1000 лет: (1 + r)^-12000 ~ 1e-52 — при фиксированных 50 знаках он терялся,
+        # платёж выходил равным процентам и долг не уменьшался
+        s, x, y = D("3000000"), D("12"), 1000
+        p = annuity_payment(s, x, y)
+        self.assertGreater(p, s * D("0.01"))
+        rows = schedule(s, x, y)
+        self.assertLessEqual(rows[-1].payment, p)
+        self.assertEqual(rows[-1].balance_after, 0)
+
     def test_global_decimal_context_untouched(self):
         before = getcontext().prec
         schedule(D("3000000"), D("12"), 15)
