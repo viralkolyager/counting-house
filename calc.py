@@ -254,16 +254,13 @@ def to_decimal_str(x: Fraction, max_digits: int = DEFAULT_DIGITS) -> str:
         rem *= 10
         digits.append(str(rem // den))
         rem %= den
-    if not digits:
-        return f"{sign}{whole}"
-    if rem == 0:
-        frac = "".join(digits)
-    elif rem in seen:
+    head = f"{sign}{whole}"
+    if rem == 0:                                   # дробь конечная
+        return f"{head}.{''.join(digits)}" if digits else head
+    if rem in seen:                                # нашли период
         start = seen[rem]
-        frac = "".join(digits[:start]) + "(" + "".join(digits[start:]) + ")"
-    else:
-        frac = "".join(digits) + "…"
-    return f"{sign}{whole}.{frac}"
+        return f"{head}.{''.join(digits[:start])}({''.join(digits[start:])})"
+    return (f"{head}.{''.join(digits)}" if digits else head) + "…"   # не уложились в max_digits
 
 
 def describe(expr: str, digits: int = DEFAULT_DIGITS) -> str:
