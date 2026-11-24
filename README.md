@@ -1,6 +1,6 @@
 # Отчет по работе № 4: [Бухгалтерия — точные вычисления (decimal, fractions)](https://github.com/viralkolyager/counting-house)
 
-**Автор:** [Гершкович Николай Владиславович, Б04-608]  
+**Автор:** Гершкович Николай Владиславович, Б04-608
 **Базовый репозиторий / задача:** [«Арифметика с плавающей запятой», упражнения 1–4](https://judge.mipt.ru/mipt_cs_on_python3_2015/labs/lab9.html#decimal), задача №4 «булгахтерия — калькулятор для дробей, точный» из [physchem-algos/index-qpc](https://github.com/physchem-algos/index-qpc)
 
 ---
