@@ -23,19 +23,18 @@
    Точка 100 — притягивающая для рекурсии, а 5 — отталкивающая,
    поэтому любая погрешность округления уводит последовательность к 100.
 """
-from muller import exact, sequence
-
-N = 30
+from muller import N_DEFAULT as N
+from muller import FAST_ROOT, X0, X1, exact, sequence
 
 
 def main() -> None:
-    xs = sequence(4.0, 4.25, N)
+    xs = sequence(float(X0), float(X1), N)
     print(f"{'n':>3} {'float':>24} {'точно':>24}")
     for n, x in enumerate(xs):
         print(f"{n:>3} {x:>24.17g} {float(exact(n)):>24.17g}")
     print()
     print(f"а) x{N} во float  = {xs[N]!r}")
-    print(f"б) предел        = 5   (точное x{N} = {float(exact(N))!r})")
+    print(f"б) предел        = {FAST_ROOT}   (точное x{N} = {float(exact(N))!r})")
     print("в) см. docstring этого файла: ошибка округления раздувается в 20^n раз")
 
 

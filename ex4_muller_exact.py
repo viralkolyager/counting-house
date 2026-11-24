@@ -10,24 +10,25 @@
 from decimal import Decimal, localcontext
 from fractions import Fraction
 
-from muller import exact, sequence
+from muller import N_DEFAULT as N
+from muller import X0, X1, exact, sequence
 
-N = 30
+PRECISIONS = (28, 40, 50, 60, 80)  # 28 — точность Decimal по умолчанию
 
 
 def with_decimal(prec: int) -> Decimal:
     with localcontext() as ctx:
         ctx.prec = prec
-        return sequence(Decimal("4"), Decimal("4.25"), N)[N]
+        return sequence(Decimal(X0), Decimal(X1), N)[N]
 
 
 def with_fraction() -> Fraction:
-    return sequence(Fraction(4), Fraction("4.25"), N)[N]
+    return sequence(Fraction(X0), Fraction(X1), N)[N]
 
 
 def main() -> None:
     print("1. Decimal")
-    for prec in (28, 40, 50, 60, 80):
+    for prec in PRECISIONS:
         print(f"   prec={prec:>2}: x{N} = {with_decimal(prec):.20g}")
 
     print()
